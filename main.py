@@ -135,7 +135,7 @@ async def play(context, song=None):
     # only play music if user is in a voice channel
     if voice_channel != None:
         voice_channel = voice_channel.channel
-        await playlist.play_yt(song + '  --default-search "ytsearch"', voice_channel, ctx)
+        await playlist.play_yt(song, voice_channel, ctx)
 
     else:
         await ctx.send('Ai kant plei miusik in ä text tschännel')
@@ -161,7 +161,7 @@ async def play_raw(context, song=None):
         await playlist.play_raw(song, voice_channel, ctx)
 
     else:
-        await ctx.send('Ai kant plei miusik in ä text tschännel')
+        await ctx.send('Ai kant plei miusik in ä text tschännäl')
 
 
 def run_bot():

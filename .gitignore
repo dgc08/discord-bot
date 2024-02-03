@@ -1,4 +1,7 @@
-<<<<<<< HEAD
+Librarys/
+*.lock
+
+# stuff
 *.token
 *.exe
 .idea/

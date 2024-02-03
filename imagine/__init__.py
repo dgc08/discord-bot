@@ -1,0 +1,3 @@
+def imagine(promt):
+    pass
+
