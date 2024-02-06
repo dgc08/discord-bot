@@ -7,12 +7,9 @@ class Playlist:
     vcs = {}
     infos = {}
 
-    async def play(self, song, voice_channel, ctx):
-        await self.play_raw('..\\' + song.replace("/", "\\"), voice_channel, ctx)
+    @staticmethod
+    def get_audio_yt_link(link_yt):
 
-    async def play_yt(self, song, voice_channel, ctx):
-        #await ctx.send("Can't youtube beacuse google/youtube gay. Ask bot dev he is the only one who is able to play yt at the moment.")
-        #return
         ydl_opts = {'extract_flat': 'discard_in_playlist',
          #'default_search': "ytsearch",
          'format': 'bestaudio[ext=m4a],bestaudio[ext=webm]',
@@ -27,10 +24,12 @@ class Playlist:
                              'when': 'playlist'}],
          'retries': 10}
         with YoutubeDL(ydl_opts) as ydl:
-            print (song)
-            link = ydl.extract_info(song, download=False)["url"]
+            print (link_yt)
+            link = ydl.extract_info(link_yt, download=False)
+        return link
 
-        await self.play_raw(link, voice_channel, ctx)
+    async def play_yt(self, song, voice_channel, ctx):
+        await self.play_raw(Playlist.get_audio_yt_link(song)["url"], voice_channel, ctx)
 
     async def play_raw(self, song, voice_channel, ctx):
         try:
@@ -48,7 +47,7 @@ class Playlist:
                     self.infos.pop(voice_channel)
                 except KeyError:
                     pass
-                await self.play(song, voice_channel, ctx)
+                await self.play_raw(song, voice_channel, ctx)
             else:
                 self.lst[voice_channel].append(song)
                 self.infos[voice_channel] = ctx.message.channel
@@ -62,7 +61,7 @@ class Playlist:
 
     async def play_song(self, song, voice_channel):
         print("play_soing called")
-        self.vcs[voice_channel].play(discord.FFmpegPCMAudio(song, options="-flvflags no_duration_filesize -vn -b:a 64k"))
+        self.vcs[voice_channel].play(discord.FFmpegPCMAudio(song, options="-flvflags no_duration_filesize -vn -b:a 64k -bufsize 2048k"))
         self.vcs[voice_channel].pause()
         await asyncsleep(1)
         self.vcs[voice_channel].resume()

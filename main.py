@@ -1,13 +1,16 @@
-import os
-from asyncio import sleep as asyncsleep
-from Playlist import Playlist
-
+import subprocess
 import threading
-from discord.ext import commands
-import discord
-from os.path import exists as file_exists
-from os import system
 from os import remove
+from os import system
+from os.path import exists as file_exists
+
+import discord
+from pydub import AudioSegment
+import requests
+from io import BytesIO
+from discord.ext import commands
+
+from Playlist import Playlist
 
 with open("discord_api.token") as f:
     token = f.read()
@@ -18,31 +21,41 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='$', intents=intents)
 
+async def webm_to_mp3(url):
+    # Get the webm file from the URL
+    response = requests.get(url)
+    webm_data = response.content
+
+    # Convert webm data to AudioSegment
+    webm_audio = AudioSegment.from_file(BytesIO(webm_data), format="webm")
+
+    # Export AudioSegment as mp3
+    mp3_data = BytesIO()
+    webm_audio.export(mp3_data, format="mp3")
+
+    return mp3_data.getvalue()
 
 @bot.command(
     name='load',
     description='Downloads a mp3 file from deine röhre (übersetze auf englisch lol) lol',
     pass_context=True, )
-async def load(ctx, link=None, name=None):
-    if link is None or name is None:
-        await ctx.send("Ju häve tu spesifei se link änd se neime of se feil.")
-        return
-    filename = "load\\" + name
-    if file_exists("..\\" + filename):
-        await ctx.send("Sät feil alredi exists.")
+async def load(ctx, link=None):
+    if link is None:
+        await ctx.send("Ju häve tu spesifei se link.")
         return
     await ctx.send("Downloading...")
 
-    out = system("yt-dlp.exe " + link + " -o ..\\" + filename)
-    print(out)
+    resource = Playlist.get_audio_yt_link(link)
 
-    if out != 0:
-        await ctx.send("Errör daunloding video.")
-        return
-    system("ffmpeg -i " + "..\\" + filename + ".webm -vn -ab 128k -ar 48000 -y ..\\" + filename + ".mp3")
-    remove("..\\" + filename + ".webm")
+    print(resource["url"])
+    print(resource["title"])
 
-    await ctx.send("Download complete... Song name: {}.mp3".format(filename.replace("\\", "/")))
+    mp3_data = await webm_to_mp3(resource["url"])
+    print("got data")
+
+    # Upload the mp3 file to Discord
+    await ctx.send(file=discord.File(BytesIO(mp3_data), filename=resource["title"]))
+
 
 
 @bot.command(
@@ -90,7 +103,7 @@ async def play_file(context, song=None):
     # only play music if user is in a voice channel
     if voice_channel != None:
         voice_channel = voice_channel.channel
-        await playlist.play(song, voice_channel, ctx)
+        await playlist.play_raw(song, voice_channel, ctx)
 
     else:
         await ctx.send('Ai kant plei miusik in ä text tschännel')
@@ -124,21 +137,11 @@ async def yt(context, song=None):
     pass_context=True,
 )
 async def play(context, song=None):
-    ctx = context
-    global playlist
-
-    if song is None:
-        await ctx.send("plis tel mi a song näme")
-        return
-    # grab the user who sent the command
-    voice_channel = context.message.author.voice
-    # only play music if user is in a voice channel
-    if voice_channel != None:
-        voice_channel = voice_channel.channel
-        await playlist.play_yt(song, voice_channel, ctx)
-
-    else:
-        await ctx.send('Ai kant plei miusik in ä text tschännel')
+    if "http" in song:
+        if "youtube.com/" in song or "youtu.be/" in song:
+            await yt(context, song)
+        else:
+            await play_file(context, song)
 
 
 @bot.command(
@@ -147,37 +150,23 @@ async def play(context, song=None):
     pass_context=True,
 )
 async def play_raw(context, song=None):
-    ctx = context
-    global playlist
-
-    if song is None:
-        await ctx.send("plis tel mi a song näme")
-        return
-    # grab the user who sent the command
-    voice_channel = context.message.author.voice
-    # only play music if user is in a voice channel
-    if voice_channel != None:
-        voice_channel = voice_channel.channel
-        await playlist.play_raw(song, voice_channel, ctx)
-
-    else:
-        await ctx.send('Ai kant plei miusik in ä text tschännäl')
+    await play_file(context, song)
 
 
 def run_bot():
     bot.run(token)
 
+if __name__ == "__main__":
+    # run_bot()
+    bot_thread = threading.Thread(target=run_bot)
+    bot_thread.start()
 
-# run_bot()
-bot_thread = threading.Thread(target=run_bot)
-bot_thread.start()
-
-while True:
-    user_input = input(">>> ")
-    if user_input == "exit":
-        break
-    else:
-        try:
-            exec(user_input)
-        except Exception as e:
-            print(e)
+    while True:
+        user_input = input(">>> ")
+        if user_input == "exit":
+            break
+        else:
+            try:
+                exec(user_input)
+            except Exception as e:
+                print(e)
