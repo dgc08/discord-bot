@@ -13,7 +13,12 @@ from discord.ext import commands
 from Playlist import Playlist
 
 with open("discord_api.token") as f:
-    token = f.read()
+    for line in f.readlines():
+        if line.startswith("#") or line.strip() == "":
+            pass
+        else:
+            token = line
+            break
 
 playlist = Playlist()
 
@@ -92,21 +97,8 @@ async def skip(ctx):
     pass_context=True,
 )
 async def play_file(context, song=None):
-    ctx = context
-    global playlist
-
-    if song is None:
-        await ctx.send("plis tel mi a song näme")
-        return
-    # grab the user who sent the command
-    voice_channel = context.message.author.voice
-    # only play music if user is in a voice channel
-    if voice_channel != None:
-        voice_channel = voice_channel.channel
-        await playlist.play_raw(song, voice_channel, ctx)
-
-    else:
-        await ctx.send('Ai kant plei miusik in ä text tschännel')
+    file = "..\\" + song
+    await play_raw(context, file)
 
 @bot.command(
     name='yt',
@@ -141,7 +133,7 @@ async def play(context, song=None):
         if "youtube.com/" in song or "youtu.be/" in song:
             await yt(context, song)
         else:
-            await play_file(context, song)
+            await play_raw(context, song)
 
 
 @bot.command(
@@ -150,7 +142,21 @@ async def play(context, song=None):
     pass_context=True,
 )
 async def play_raw(context, song=None):
-    await play_file(context, song)
+    ctx = context
+    global playlist
+
+    if song is None:
+        await ctx.send("plis tel mi a song näme")
+        return
+    # grab the user who sent the command
+    voice_channel = context.message.author.voice
+    # only play music if user is in a voice channel
+    if voice_channel != None:
+        voice_channel = voice_channel.channel
+        await playlist.play_raw(song, voice_channel, ctx, {"title": song.replace("..\\", "")})
+
+    else:
+        await ctx.send('Ai kant plei miusik in ä text tschännel')
 
 
 def run_bot():
