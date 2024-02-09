@@ -5,7 +5,7 @@ nsfw_keywords = (
     "swingers", "threesome", "gangbang", "anal", "oral", "blowjob", "handjob",
     "cameltoe", "pussy", "cock", "fuck", "suck", "tits", "dildo", "vibrator",
     "strip", "striptease", "lingerie", "playboy", "hentai", "ecchi", "yaoi",
-    "yuri", "furry", "rule34", "cumshot", "squirt", "creampie", "incest",
+    "yuri", "furry", "rule3", "rule 3", "cumshot", "squirt", "creampie", "incest",
     "milf", "cougar", "bareback", "escort", "prostitute", "whore", "slut",
     "cumslut", "bukkake", "gangbang", "orgasm", "nympho", "thong", "underwear",
     "condom", "sperm", "gonzo", "rimjob", "masturbate", "nipple", "wet",

@@ -29,9 +29,12 @@ async def imagine(ctx, prompt_user, style, scan_image = False):
 
     await imagine_core(ctx, prompt,queue_id, style,scan_image)
 
-async def imagine_core(ctx, prompt,queue_id,style, scan_image = False):
+async def imagine_core(ctx, prompt,queue_id,style, scan_image = False, sleeptime=0.1):
     # set the seed for our KSampler node
-    prompt["3"]["inputs"]["seed"] = randint(1, 2147483647)
+    try:
+        prompt["3"]["inputs"]["seed"] = randint(1, 2147483647)
+    except KeyError:
+        pass
     for i, prompt_obj in prompt.items():
         if prompt_obj["class_type"] == "SaveImage":
             filename_prefix = prompt[i]["inputs"]["filename_prefix"]
@@ -45,12 +48,22 @@ async def imagine_core(ctx, prompt,queue_id,style, scan_image = False):
             textprompt = prompt[i]["inputs"]["raw_text"]
             print(prompt[i]["inputs"]["raw_text"])
 
+    filename = f"imagine/outputs/{queue_id}_00001_.png"
+    print(filename)
+
+    if scan_image == True:
+        try:
+            if not check_image(filename, textprompt):
+                await ctx.send("I won't imagine this. Skibbidy image (or rather skibbidy prompt) detected. Hans get se flammenwerfer!")
+                os.remove(filename)
+                return
+        except UnboundLocalError:
+            pass
+
     start_time = time.time()
 
     queue_prompt(prompt)
 
-    filename = f"imagine/outputs/{queue_id}_00001_.png"
-    print(filename)
 
     while True:
         if os.path.isfile(filename):
@@ -58,17 +71,13 @@ async def imagine_core(ctx, prompt,queue_id,style, scan_image = False):
         else:
             await sleep(0.05)
 
-    time.sleep(0.1)
+    time.sleep(sleeptime)
 
     elapsed_time = time.time() - start_time
 
     print("Elapsed time:", elapsed_time, "seconds", filename)
 
-    if scan_image == True:
-        if not check_image(filename, textprompt):
-            await ctx.send("I won't imagine this. Skibbidy image (or rather skibbidy prompt) detected. Hans get se flammenwerfer!")
-            os.remove(filename)
-            return
+
 
     #ctx, prompt_user, style, scan_image = False
     id_to_prompt[queue_id] = {"ctx": ctx, "prompt":prompt, "scan_image":scan_image, "style":style}
@@ -113,4 +122,19 @@ class GeneratedOptions(discord.ui.View): # Create a class called MyView that sub
                 prompt_obj["inputs"]["image"] = "../output/imagine/" + generate_id + "_00001_.png"
 
         await imagine_core(id_to_prompt[generate_id]["ctx"], prompt, queue_id, id_to_prompt[generate_id]["style"], id_to_prompt[generate_id]["scan_image"])
+
+    @discord.ui.button(label="Upscale this image", style=discord.ButtonStyle.primary) # Create a button with the label "😎 Click me!" with color Blurple
+    async def button_callback3(self, interaction, button):
+        try:
+            generate_id = interaction.message.attachments[0].filename.replace('SPOILER_', '').replace('.png', '')
+        except:
+            interaction.reply("Too much time has elapsed, the buttons don't work anymore...")
+            return
+        queue_id = str(randint(1, 2147483647))
+        prompt = json.load(open(f'imagine/upscale.json'))
+        for i, prompt_obj in prompt.items():
+            if prompt_obj["class_type"] == "LoadImage":
+                prompt_obj["inputs"]["image"] = "../output/imagine/" + generate_id + "_00001_.png"
+
+        await imagine_core(id_to_prompt[generate_id]["ctx"], prompt, queue_id, id_to_prompt[generate_id]["style"], id_to_prompt[generate_id]["scan_image"], 1.2)
 
