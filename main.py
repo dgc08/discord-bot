@@ -1,8 +1,4 @@
-import subprocess
 import threading
-from os import remove
-from os import system
-from os.path import exists as file_exists
 
 import discord
 from pydub import AudioSegment
@@ -11,13 +7,15 @@ from io import BytesIO
 from discord.ext import commands
 
 from Playlist import Playlist
+from imagine import imagine
 
 with open("discord_api.token") as f:
     for line in f.readlines():
         if line.startswith("#") or line.strip() == "":
             pass
         else:
-            token = line
+            token = line.strip()
+            print(token)
             break
 
 playlist = Playlist()
@@ -96,7 +94,9 @@ async def skip(ctx):
     description='Plays a mp3 file lol',
     pass_context=True,
 )
-async def play_file(context, song=None):
+async def play_file(context, song=None, *args):
+    if args == [] or args is not None:
+        song = song + " " + " ".join(args)
     file = "..\\" + song
     await play_raw(context, file)
 
@@ -122,18 +122,46 @@ async def yt(context, song=None):
     else:
         await ctx.send('Ai kant plei miusik in ä text tschännel')
 
+@bot.command(
+    name='imagine',
+    description='Generative Image AI powered by Stable Diffusion. If its not working, that might be because my Comfy UI is not running.',
+    pass_context=True,
+)
+async def imagine_call(context, prompt=None, *args):
+    channels = [1205261574130892830, 1205261654208811038, 1094293780330463282, 1205264701869785138, 922766999388561460, 1205461984489906196]
+    channels_to_scan = [1205461984489906196, 1205261574130892830]
+    if context.channel.id not in channels:
+        await context.send("You cannot use this function here.")
+        return
+    if args == [] or args is not None:
+        prompt = prompt + " " + " ".join(args)
+
+    if "/" in prompt:
+        o_prompt = prompt
+        prompt, style = prompt.split("/")
+        style = style.strip()
+    else:
+        style = "base_workflow"
+
+    if context.channel.id in channels_to_scan:
+        await imagine(context, prompt, style, True)
+    else:
+        await imagine(context, prompt, style)
 
 @bot.command(
     name='play',
     description='Plays a yt lol',
     pass_context=True,
 )
-async def play(context, song=None):
+async def play(context, song=None, *args):
+    print("play called")
+    if args == [] or args is not None:
+        song = song + " " + " ".join(args)
     if "http" in song:
         if "youtube.com/" in song or "youtu.be/" in song:
             await yt(context, song)
-        else:
-            await play_raw(context, song)
+    else:
+        await play_raw(context, song)
 
 
 @bot.command(

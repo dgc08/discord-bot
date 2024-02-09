@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 737507010924611,
+      "seed": 93157402191033,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -92,7 +92,7 @@
   },
   "17": {
     "inputs": {
-      "raw_text": "masterpiece, highly detailed"
+      "raw_text": ",cinematic photo, cyberpunk, rooftop, cyberpunk night, sci-fi, fantasy, neon light, highly detailed, digital painting, art by tian zi and craig mullins and wlop and alphonse mucha . 35mm photograph, film, bokeh, professional, 4k, highly detailed, in heavy raining futuristic tokyo,"
     },
     "class_type": "RawText",
     "_meta": {
@@ -117,7 +117,7 @@
   },
   "20": {
     "inputs": {
-      "raw_text": "blue ball"
+      "raw_text": "futuristic Bed in futuristic room"
     },
     "class_type": "RawText",
     "_meta": {
@@ -142,7 +142,7 @@
   },
   "23": {
     "inputs": {
-      "raw_text": ", (nsfw:2), Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
+      "raw_text": ",(nsfw), cars, Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
     },
     "class_type": "RawText",
     "_meta": {

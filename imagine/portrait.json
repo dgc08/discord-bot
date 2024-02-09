@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 737507010924611,
+      "seed": 700800092133971,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -92,7 +92,7 @@
   },
   "17": {
     "inputs": {
-      "raw_text": "masterpiece, highly detailed"
+      "raw_text": "(portrait), (close-up), \"RAW candid cinema, 16mm, color graded portra 400 film, remarkable color, ultra realistic, textured skin, remarkable detailed pupils, realistic dull skin noise, visible skin detail, skin fuzz, dry skin, shot with cinematic camera\","
     },
     "class_type": "RawText",
     "_meta": {
@@ -117,7 +117,7 @@
   },
   "20": {
     "inputs": {
-      "raw_text": "blue ball"
+      "raw_text": "Arnold Schwarzenegger on a Motorcycle"
     },
     "class_type": "RawText",
     "_meta": {
@@ -142,7 +142,7 @@
   },
   "23": {
     "inputs": {
-      "raw_text": ", (nsfw:2), Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
+      "raw_text": ", (nsfw), cartoon, anime, Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
     },
     "class_type": "RawText",
     "_meta": {

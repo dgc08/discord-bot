@@ -1,7 +1,7 @@
 Librarys/
 *.lock
-
-# stuff
+*.png
+ign_*
 *.token
 *.exe
 .idea/

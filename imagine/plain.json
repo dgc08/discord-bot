@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 737507010924611,
+      "seed": 864162512617785,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -90,31 +90,6 @@
       "title": "Save Image"
     }
   },
-  "17": {
-    "inputs": {
-      "raw_text": "masterpiece, highly detailed"
-    },
-    "class_type": "RawText",
-    "_meta": {
-      "title": "RawText"
-    }
-  },
-  "18": {
-    "inputs": {
-      "raw_text_1": [
-        "20",
-        0
-      ],
-      "raw_text_2": [
-        "17",
-        0
-      ]
-    },
-    "class_type": "RawTextCombine",
-    "_meta": {
-      "title": "RawTextCombine"
-    }
-  },
   "20": {
     "inputs": {
       "raw_text": "blue ball"
@@ -127,7 +102,7 @@
   "22": {
     "inputs": {
       "raw_text": [
-        "18",
+        "20",
         0
       ],
       "clip": [
@@ -140,15 +115,6 @@
       "title": "RawTextEncode"
     }
   },
-  "23": {
-    "inputs": {
-      "raw_text": ", (nsfw:2), Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
-    },
-    "class_type": "RawText",
-    "_meta": {
-      "title": "RawText"
-    }
-  },
   "25": {
     "inputs": {
       "raw_text": ""
@@ -158,26 +124,10 @@
       "title": "RawText"
     }
   },
-  "26": {
-    "inputs": {
-      "raw_text_1": [
-        "25",
-        0
-      ],
-      "raw_text_2": [
-        "23",
-        0
-      ]
-    },
-    "class_type": "RawTextCombine",
-    "_meta": {
-      "title": "RawTextCombine"
-    }
-  },
   "27": {
     "inputs": {
       "raw_text": [
-        "26",
+        "25",
         0
       ],
       "clip": [

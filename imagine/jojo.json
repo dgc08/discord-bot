@@ -1,14 +1,14 @@
 {
   "3": {
     "inputs": {
-      "seed": 737507010924611,
+      "seed": 165509300695973,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
       "scheduler": "normal",
       "denoise": 1,
       "model": [
-        "4",
+        "33",
         0
       ],
       "positive": [
@@ -92,7 +92,7 @@
   },
   "17": {
     "inputs": {
-      "raw_text": "masterpiece, highly detailed"
+      "raw_text": "best quality, masterpiece"
     },
     "class_type": "RawText",
     "_meta": {
@@ -117,7 +117,7 @@
   },
   "20": {
     "inputs": {
-      "raw_text": "blue ball"
+      "raw_text": "elon musk portrait"
     },
     "class_type": "RawText",
     "_meta": {
@@ -131,7 +131,7 @@
         0
       ],
       "clip": [
-        "4",
+        "33",
         1
       ]
     },
@@ -142,7 +142,7 @@
   },
   "23": {
     "inputs": {
-      "raw_text": ", (nsfw:2), Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
+      "raw_text": ", (nsfw), Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
     },
     "class_type": "RawText",
     "_meta": {
@@ -181,13 +181,32 @@
         0
       ],
       "clip": [
-        "4",
+        "33",
         1
       ]
     },
     "class_type": "RawTextEncode",
     "_meta": {
       "title": "RawTextEncode"
+    }
+  },
+  "33": {
+    "inputs": {
+      "lora_name": "JOJOS_BIZARRE_ADVENTURE_Part5_ComicStyle-000040.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "4",
+        0
+      ],
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Load LoRA"
     }
   }
 }
