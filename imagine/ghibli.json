@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 864162512617785,
+      "seed": 687748187068763,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -79,9 +79,34 @@
       "title": "Save Image"
     }
   },
+  "17": {
+    "inputs": {
+      "raw_text": "(Studio ghibli style, Art by Hayao Miyazaki:1.2), Anime Style, Manga Style, Hand drawn, cinematic, Sharp focus, humorous illustration, big depth of field, Masterpiece, concept art, trending on artstation, Vivid colors, Simplified style, trending on ArtStation,"
+    },
+    "class_type": "RawText",
+    "_meta": {
+      "title": "RawText"
+    }
+  },
+  "18": {
+    "inputs": {
+      "raw_text_1": [
+        "20",
+        0
+      ],
+      "raw_text_2": [
+        "17",
+        0
+      ]
+    },
+    "class_type": "RawTextCombine",
+    "_meta": {
+      "title": "RawTextCombine"
+    }
+  },
   "20": {
     "inputs": {
-      "raw_text": "blue ball"
+      "raw_text": "Arnold Schwarzenegger on a Motorcycle"
     },
     "class_type": "RawText",
     "_meta": {
@@ -91,7 +116,7 @@
   "22": {
     "inputs": {
       "raw_text": [
-        "20",
+        "18",
         0
       ],
       "clip": [
@@ -104,6 +129,15 @@
       "title": "RawTextEncode"
     }
   },
+  "23": {
+    "inputs": {
+      "raw_text": ", (nsfw), Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
+    },
+    "class_type": "RawText",
+    "_meta": {
+      "title": "RawText"
+    }
+  },
   "25": {
     "inputs": {
       "raw_text": ""
@@ -113,10 +147,26 @@
       "title": "RawText"
     }
   },
+  "26": {
+    "inputs": {
+      "raw_text_1": [
+        "25",
+        0
+      ],
+      "raw_text_2": [
+        "23",
+        0
+      ]
+    },
+    "class_type": "RawTextCombine",
+    "_meta": {
+      "title": "RawTextCombine"
+    }
+  },
   "27": {
     "inputs": {
       "raw_text": [
-        "25",
+        "26",
         0
       ],
       "clip": [

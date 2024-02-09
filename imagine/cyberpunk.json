@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 93157402191033,
+      "seed": 521866441695922,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -20,7 +20,7 @@
         0
       ],
       "latent_image": [
-        "5",
+        "28",
         0
       ]
     },
@@ -36,17 +36,6 @@
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
       "title": "Load Checkpoint"
-    }
-  },
-  "5": {
-    "inputs": {
-      "width": 512,
-      "height": 512,
-      "batch_size": 1
-    },
-    "class_type": "EmptyLatentImage",
-    "_meta": {
-      "title": "Empty Latent Image"
     }
   },
   "8": {
@@ -188,6 +177,32 @@
     "class_type": "RawTextEncode",
     "_meta": {
       "title": "RawTextEncode"
+    }
+  },
+  "28": {
+    "inputs": {
+      "pixels": [
+        "29",
+        0
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "29": {
+    "inputs": {
+      "image": "ComfyUI.55_00005_.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
     }
   }
 }

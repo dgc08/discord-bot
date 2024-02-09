@@ -1,6 +1,6 @@
-nsfw_keywords = [
+nsfw_keywords = (
     "nsfw", "nude", "naked", "porn", "sex", "erotic", "xxx", "adult",
-    "hot", "sexy", "boobs", "ass", "butt", "penis", "vagina", "dick",
+    "sexy", "boobs", "ass", "butt", "penis", "vagina", "dick",
     "cum", "orgasm", "masturbation", "fetish", "kinky", "bondage", "orgy",
     "swingers", "threesome", "gangbang", "anal", "oral", "blowjob", "handjob",
     "cameltoe", "pussy", "cock", "fuck", "suck", "tits", "dildo", "vibrator",
@@ -17,9 +17,9 @@ nsfw_keywords = [
     "sensual", "lewd", "orgasmic", "spicy", "raunchy", "eroticism", "sinful",
     "lustful", "kinky", "fetish", "voyeur", "exhibitionist", "libido",
     "aphrodisiac", "masturbatory", "sultry", "voluptuous", "booty", "chicks",
-    "pantyhose", "crotch", "kink", "lustful", "shaved", "erotic", "hump",
+    "pantyhose", "crotch", "kink", "shaved", "erotic", "hump",
     "stimulate", "cocktail", "fingering", "grope", "caress", "pleasure",
     "fap", "bikini", "striptease", "sensual", "libido", "foreplay", "cum",
-    "naughty", "dirty", "erogenous", "handcuffs", "spanking", "tantric",
-    "forbidden", "hot ", "brunette"
-]
+    "naughty", "dirty", "erogenous", "spanking", "tantric",
+    "forbidden", "hot ", "brunette", "hot,"
+)

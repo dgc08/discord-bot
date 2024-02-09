@@ -31,7 +31,7 @@ def queue_prompt(prompt_workflow):
 
 def check_image (filename, prompt = None):
     for i in nsfw_keywords:
-        if ","+i in prompt or " "+i in prompt:
+        if ","+i in prompt or " "+i in prompt or i in prompt:
             print(i)
             return False
     return True

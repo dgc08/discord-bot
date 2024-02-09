@@ -129,7 +129,7 @@ async def yt(context, song=None):
 )
 async def imagine_call(context, prompt=None, *args):
     channels = [1205261574130892830, 1205261654208811038, 1094293780330463282, 1205264701869785138, 922766999388561460, 1205461984489906196]
-    channels_to_scan = [1205461984489906196, 1205261574130892830]
+    channels_to_not_scan = [1205264701869785138, 1205261654208811038]
     if context.channel.id not in channels:
         await context.send("You cannot use this function here.")
         return
@@ -143,7 +143,9 @@ async def imagine_call(context, prompt=None, *args):
     else:
         style = "base_workflow"
 
-    if context.channel.id in channels_to_scan:
+    prompt = prompt + " "
+
+    if context.channel.id not in channels_to_not_scan:
         await imagine(context, prompt, style, True)
     else:
         await imagine(context, prompt, style)
@@ -196,7 +198,10 @@ if __name__ == "__main__":
     bot_thread.start()
 
     while True:
-        user_input = input(">>> ")
+        try:
+            user_input = input(">>> ")
+        except KeyboardInterrupt:
+            exit()
         if user_input == "exit":
             break
         else:
