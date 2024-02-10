@@ -73,6 +73,7 @@ async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime
         except UnboundLocalError:
             pass
 
+    generating_message = await ctx.send("Generating...", reference=ctx.message)
     start_time = time.time()
 
     queue_prompt(prompt)
@@ -88,6 +89,7 @@ async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime
     elapsed_time = time.time() - start_time
 
     print("Elapsed time:", elapsed_time, "seconds", filename)
+    await generating_message.edit(content="Done.")
 
     # ctx, prompt_user, style, scan_image = False
     id_to_prompt[queue_id] = {"ctx": ctx, "prompt": prompt, "scan_image": scan_image, "style": style, "sleeptime": sleeptime}
@@ -101,6 +103,8 @@ async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime
             await ctx.send(f'Generation Time: {elapsed_time}',
                            file=discord.File(f, f"{queue_id}.png", spoiler=True),
                            reference=ctx.message, view=GeneratedOptions())
+
+    await generating_message.delete()
 
     await sleep(60)
 
@@ -119,14 +123,13 @@ class GeneratedOptions(discord.ui.View):  # Create a class called MyView that su
             await interaction.response.send_message(
                 content="Too much time has elapsed, the buttons don't work anymore...", ephemeral=True)
 
-        await interaction.response.send_message(content="Generating...", ephemeral=True)
-
         queue_id = str(randint(1, 2147483647))
         prompt = id_to_prompt[generate_id]["prompt"]
         for i, prompt_obj in prompt.items():
             if prompt_obj["class_type"] == "KSampler":
                 prompt[i]["inputs"]["denoise"] = 1
 
+        await interaction.response.defer()
         await imagine_core(id_to_prompt[generate_id]["ctx"], prompt, queue_id, id_to_prompt[generate_id]["style"],
                            id_to_prompt[generate_id]["scan_image"], id_to_prompt[generate_id]["sleeptime"])
 
@@ -140,7 +143,6 @@ class GeneratedOptions(discord.ui.View):  # Create a class called MyView that su
             await interaction.response.send_message(
                 content="Too much time has elapsed, the buttons don't work anymore...", ephemeral=True)
 
-        await interaction.response.send_message(content="Generating...", ephemeral=True)
 
         queue_id = str(randint(1, 2147483647))
         prompt = id_to_prompt[generate_id]["prompt"]
@@ -151,6 +153,7 @@ class GeneratedOptions(discord.ui.View):  # Create a class called MyView that su
             if prompt_obj["class_type"] == "LoadImage":
                 prompt_obj["inputs"]["image"] = "../output/imagine/" + generate_id + "_00001_.png"
 
+        await interaction.response.defer()
         await imagine_core(id_to_prompt[generate_id]["ctx"], prompt, queue_id, id_to_prompt[generate_id]["style"],
                            id_to_prompt[generate_id]["scan_image"], id_to_prompt[generate_id]["sleeptime"])
 
@@ -164,13 +167,12 @@ class GeneratedOptions(discord.ui.View):  # Create a class called MyView that su
             await interaction.response.send_message(
                 content="Too much time has elapsed, the buttons don't work anymore...", ephemeral=True)
 
-        await interaction.response.send_message(content="Upscaling...", ephemeral=True)
-
         queue_id = str(randint(1, 2147483647))
         prompt = json.load(open(f'imagine/upscale.json'))
         for i, prompt_obj in prompt.items():
             if prompt_obj["class_type"] == "LoadImage":
                 prompt_obj["inputs"]["image"] = "../output/imagine/" + generate_id + "_00001_.png"
 
+        await interaction.response.defer()
         await imagine_core(id_to_prompt[generate_id]["ctx"], prompt, queue_id, id_to_prompt[generate_id]["style"],
                            id_to_prompt[generate_id]["scan_image"], 2)
