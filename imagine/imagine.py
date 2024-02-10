@@ -38,3 +38,4 @@ def check_image (filename, prompt = None):
 
 def test():
     print(check_image("C:\\Library\\workspaces\\stable-diffusion\\webui\\ComfyUI\\output\\ComfyUI_00010_.png"))
+

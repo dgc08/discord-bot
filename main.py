@@ -128,27 +128,41 @@ async def yt(context, song=None):
     pass_context=True,
 )
 async def imagine_call(context, prompt=None, *args):
-    channels = [1205261574130892830, 1205261654208811038, 1094293780330463282, 1205264701869785138, 922766999388561460, 1205461984489906196]
-    channels_to_not_scan = [1205264701869785138, 1205261654208811038]
+    channels = [1205261574130892830, 1205261654208811038, 1094293780330463282, 1205264701869785138, 922766999388561460, 1205461984489906196, 1205650318843707422]
+    channels_to_not_scan = [1205264701869785138, 1205261654208811038, 1205650318843707422]
     if context.channel.id not in channels:
         await context.send("You cannot use this function here.")
         return
     if args == [] or args is not None:
         prompt = prompt + " " + " ".join(args)
 
+    batch_count = 1
+    negative_prompt = ""
+    style = "base_workflow"
     if "/" in prompt:
-        o_prompt = prompt
-        prompt, style = prompt.split("/")
-        style = style.strip()
-    else:
-        style = "base_workflow"
+        splitted = prompt.split("/")
+        prompt = splitted[0]
+
+
+        for i in splitted[1:]:
+            i = i.strip()
+            try:
+                batch_count = int(i)
+                continue
+            except ValueError:
+                pass
+
+            if i.lower().startswith ("negative:") or i.lower().startswith ("n:"):
+                negative_prompt = i.split(":")[1].strip()
+            else:
+                style = i
 
     prompt = prompt + " "
 
     if context.channel.id not in channels_to_not_scan:
-        await imagine(context, prompt, style, True)
+        await imagine(context, prompt, negative_prompt, style, batch_count, True)
     else:
-        await imagine(context, prompt, style)
+        await imagine(context, prompt, negative_prompt, style, batch_count)
 
 @bot.command(
     name='play',

@@ -1,14 +1,14 @@
 {
     "3": {
         "inputs": {
-            "seed": 760533473357751,
-            "steps": 20,
+            "seed": 551777053818795,
+            "steps": 30,
             "cfg": 8,
-            "sampler_name": "euler",
+            "sampler_name": "dpmpp_sde",
             "scheduler": "normal",
             "denoise": 1,
             "model": [
-                "33",
+                "4",
                 0
             ],
             "positive": [
@@ -20,7 +20,7 @@
                 0
             ],
             "latent_image": [
-                "5",
+                "28",
                 0
             ]
         },
@@ -31,22 +31,11 @@
     },
     "4": {
         "inputs": {
-            "ckpt_name": "deliberate_v2.safetensors"
+            "ckpt_name": "ghostmix_v20Bakedvae.safetensors"
         },
         "class_type": "CheckpointLoaderSimple",
         "_meta": {
             "title": "Load Checkpoint"
-        }
-    },
-    "5": {
-        "inputs": {
-            "width": 512,
-            "height": 512,
-            "batch_size": 1
-        },
-        "class_type": "EmptyLatentImage",
-        "_meta": {
-            "title": "Empty Latent Image"
         }
     },
     "8": {
@@ -92,7 +81,7 @@
     },
     "17": {
         "inputs": {
-            "raw_text": "Adolf Hitler,best quality, masterpiece"
+            "raw_text": "masterpiece, highly detailed"
         },
         "class_type": "RawText",
         "_meta": {
@@ -117,7 +106,7 @@
     },
     "20": {
         "inputs": {
-            "raw_text": "RAW photo, Adolf Hitler in paris, army, blakc and white"
+            "raw_text": "beautiful scenery nature (glass bottle) landscape, purple galaxy bottle, (natural background, trees)"
         },
         "class_type": "RawText",
         "_meta": {
@@ -131,8 +120,8 @@
                 0
             ],
             "clip": [
-                "33",
-                1
+                "30",
+                0
             ]
         },
         "class_type": "RawTextEncode",
@@ -142,7 +131,7 @@
     },
     "23": {
         "inputs": {
-            "raw_text": ", (nsfw),embedding:easynegative.safetensors, Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
+            "raw_text": ",(nsfw),embedding:easynegative.safetensors,(worst quality:2), (low quality:2), (normal quality:1.8), lowres, ((monochrome)), ((grayscale)),sketch,ugly,morbid, deformed,logo,text, bad anatomy,bad proportions,disfigured,extra arms, extra legs, fused fingers,extra digits, fewer digits, mutated hands, poorly drawn hands,bad hands,"
         },
         "class_type": "RawText",
         "_meta": {
@@ -155,7 +144,7 @@
         },
         "class_type": "RawText",
         "_meta": {
-            "title": "RawText"
+            "title": "Negative"
         }
     },
     "26": {
@@ -181,8 +170,8 @@
                 0
             ],
             "clip": [
-                "33",
-                1
+                "30",
+                0
             ]
         },
         "class_type": "RawTextEncode",
@@ -190,23 +179,43 @@
             "title": "RawTextEncode"
         }
     },
-    "33": {
+    "28": {
         "inputs": {
-            "lora_name": "AdolfHitler-pruned.safetensors",
-            "strength_model": 1,
-            "strength_clip": 1,
-            "model": [
-                "4",
+            "pixels": [
+                "29",
                 0
             ],
+            "vae": [
+                "4",
+                2
+            ]
+        },
+        "class_type": "VAEEncode",
+        "_meta": {
+            "title": "VAE Encode"
+        }
+    },
+    "29": {
+        "inputs": {
+            "image": "../output/imagine.png",
+            "upload": "image"
+        },
+        "class_type": "LoadImage",
+        "_meta": {
+            "title": "Load Image"
+        }
+    },
+    "30": {
+        "inputs": {
+            "stop_at_clip_layer": -2,
             "clip": [
                 "4",
                 1
             ]
         },
-        "class_type": "LoraLoader",
+        "class_type": "CLIPSetLastLayer",
         "_meta": {
-            "title": "Load LoRA"
+            "title": "CLIP Set Last Layer"
         }
     }
 }

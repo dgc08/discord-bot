@@ -21,5 +21,7 @@ nsfw_keywords = (
     "stimulate", "cocktail", "fingering", "grope", "caress", "pleasure",
     "fap", "bikini", "striptease", "sensual", "libido", "foreplay", "cum",
     "naughty", "dirty", "erogenous", "spanking", "tantric",
-    "forbidden", "hot ", "brunette", "hot,"
+    "forbidden", "hot ", "brunette", "hot,", "69", "femboy"
 )
+
+
