@@ -4,6 +4,7 @@ import json
 import os.path
 import time
 from asyncio import sleep
+from copy import deepcopy
 from random import randint
 
 import discord
@@ -39,11 +40,15 @@ async def imagine(ctx, prompt_user, negative_prompt, style, batch_count=1, scan_
         if prompt_obj["_meta"]["title"] == "CLIPNegative":  # Positive Prompt
             prompt[i]["inputs"]["text"] = prompt_user
 
-    coroutines = [imagine_core(ctx, prompt, str(randint(1, 2147483647)), style, scan_image, sleeptime) for _ in range(batch_count)]
-    await asyncio.gather(*coroutines)
+    coroutines = [imagine_core(ctx, prompt, str(randint(1, 2147483647)), style, scan_image, sleeptime) for _ in
+                  range(batch_count)]
+    tasks = [asyncio.create_task(coroutine) for coroutine in coroutines]
+    await asyncio.wait(tasks)
 
 
 async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime=0.1):
+    prompt = deepcopy(prompt)
+
     # set the seed for our KSampler node
     for i, prompt_obj in prompt.items():
         if prompt_obj["class_type"] == "KSampler":

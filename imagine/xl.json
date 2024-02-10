@@ -164,7 +164,7 @@
   },
   "36": {
     "inputs": {
-      "text": ", (nsfw), embedding:easynegative.safetensors,smooth, plastic, blurry, low-resolution, deep-fried, oversaturated",
+      "text": ", (nsfw),smooth, plastic, blurry, low-resolution, deep-fried, oversaturated",
       "clip": [
         "4",
         1
