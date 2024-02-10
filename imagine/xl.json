@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 1052440733098854,
+      "seed": 569506702320946,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -12,15 +12,15 @@
         0
       ],
       "positive": [
-        "22",
+        "31",
         0
       ],
       "negative": [
-        "27",
+        "34",
         0
       ],
       "latent_image": [
-        "28",
+        "37",
         0
       ]
     },
@@ -31,7 +31,7 @@
   },
   "4": {
     "inputs": {
-      "ckpt_name": "deliberate_v2.safetensors"
+      "ckpt_name": "sd_xl_base_1.0.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
@@ -79,110 +79,106 @@
       "title": "Save Image"
     }
   },
-  "17": {
+  "29": {
     "inputs": {
-      "raw_text": "(portrait), (close-up), \"RAW candid cinema, 16mm, color graded portra 400 film, remarkable color, ultra realistic, textured skin, remarkable detailed pupils, realistic dull skin noise, visible skin detail, skin fuzz, dry skin, shot with cinematic camera\","
+      "image": "sdxl.png",
+      "upload": "image"
     },
-    "class_type": "RawText",
+    "class_type": "LoadImage",
     "_meta": {
-      "title": "RawText"
+      "title": "Load Image"
     }
   },
-  "18": {
+  "31": {
     "inputs": {
-      "raw_text_1": [
-        "20",
+      "conditioning_to_strength": 0.75,
+      "conditioning_to": [
+        "32",
         0
       ],
-      "raw_text_2": [
-        "17",
+      "conditioning_from": [
+        "33",
         0
       ]
     },
-    "class_type": "RawTextCombine",
+    "class_type": "ConditioningAverage",
     "_meta": {
-      "title": "RawTextCombine"
+      "title": "ConditioningAverage"
     }
   },
-  "20": {
+  "32": {
     "inputs": {
-      "raw_text": "Arnold Schwarzenegger on a Motorcycle"
-    },
-    "class_type": "RawText",
-    "_meta": {
-      "title": "Prompt"
-    }
-  },
-  "22": {
-    "inputs": {
-      "raw_text": [
-        "18",
-        0
-      ],
+      "text": "beautiful scenery nature glass bottle landscape, purple galaxy bottle,",
       "clip": [
         "4",
         1
       ]
     },
-    "class_type": "RawTextEncode",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "RawTextEncode"
+      "title": "CLIPPrompt"
     }
   },
-  "23": {
+  "33": {
     "inputs": {
-      "raw_text": ", (nsfw),embedding:easynegative.safetensors, cartoon, anime, Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
-    },
-    "class_type": "RawText",
-    "_meta": {
-      "title": "RawText"
-    }
-  },
-  "25": {
-    "inputs": {
-      "raw_text": ""
-    },
-    "class_type": "RawText",
-    "_meta": {
-      "title": "RawText"
-    }
-  },
-  "26": {
-    "inputs": {
-      "raw_text_1": [
-        "25",
-        0
-      ],
-      "raw_text_2": [
-        "23",
-        0
-      ]
-    },
-    "class_type": "RawTextCombine",
-    "_meta": {
-      "title": "RawTextCombine"
-    }
-  },
-  "27": {
-    "inputs": {
-      "raw_text": [
-        "26",
-        0
-      ],
+      "text": "detailed, realistic, 8k uhd, high quality",
       "clip": [
         "4",
         1
       ]
     },
-    "class_type": "RawTextEncode",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "RawTextEncode"
+      "title": "CLIP Text Encode (Prompt)"
     }
   },
-  "28": {
+  "34": {
+    "inputs": {
+      "conditioning_to_strength": 0.6,
+      "conditioning_to": [
+        "36",
+        0
+      ],
+      "conditioning_from": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "ConditioningAverage",
+    "_meta": {
+      "title": "ConditioningAverage"
+    }
+  },
+  "35": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIPNegative"
+    }
+  },
+  "36": {
+    "inputs": {
+      "text": ", (nsfw), embedding:easynegative.safetensors,smooth, plastic, blurry, low-resolution, deep-fried, oversaturated",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "37": {
     "inputs": {
       "pixels": [
-        "29",
+        "38",
         0
       ],
       "vae": [
@@ -195,9 +191,9 @@
       "title": "VAE Encode"
     }
   },
-  "29": {
+  "38": {
     "inputs": {
-      "image": "../output/portrait_00001_.png",
+      "image": "sdxl.png",
       "upload": "image"
     },
     "class_type": "LoadImage",

@@ -1,14 +1,14 @@
 {
   "3": {
     "inputs": {
-      "seed": 1052440733098854,
+      "seed": 1103076119436406,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
       "scheduler": "normal",
       "denoise": 1,
       "model": [
-        "4",
+        "33",
         0
       ],
       "positive": [
@@ -20,7 +20,7 @@
         0
       ],
       "latent_image": [
-        "28",
+        "5",
         0
       ]
     },
@@ -31,11 +31,22 @@
   },
   "4": {
     "inputs": {
-      "ckpt_name": "deliberate_v2.safetensors"
+      "ckpt_name": "anythingv5nijimix_25BEST.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
       "title": "Load Checkpoint"
+    }
+  },
+  "5": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
     }
   },
   "8": {
@@ -81,11 +92,11 @@
   },
   "17": {
     "inputs": {
-      "raw_text": "(portrait), (close-up), \"RAW candid cinema, 16mm, color graded portra 400 film, remarkable color, ultra realistic, textured skin, remarkable detailed pupils, realistic dull skin noise, visible skin detail, skin fuzz, dry skin, shot with cinematic camera\","
+      "raw_text": "tank,best quality, masterpiece"
     },
     "class_type": "RawText",
     "_meta": {
-      "title": "RawText"
+      "title": "Prompt"
     }
   },
   "18": {
@@ -106,11 +117,11 @@
   },
   "20": {
     "inputs": {
-      "raw_text": "Arnold Schwarzenegger on a Motorcycle"
+      "raw_text": "RAW photo, tank, desert"
     },
     "class_type": "RawText",
     "_meta": {
-      "title": "Prompt"
+      "title": "RawText"
     }
   },
   "22": {
@@ -120,7 +131,7 @@
         0
       ],
       "clip": [
-        "4",
+        "33",
         1
       ]
     },
@@ -131,7 +142,7 @@
   },
   "23": {
     "inputs": {
-      "raw_text": ", (nsfw),embedding:easynegative.safetensors, cartoon, anime, Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
+      "raw_text": ", (nsfw),embedding:easynegative.safetensors, Watermark, Text, censored, deformed, low quality,((low resolution)), noise, artifacts, "
     },
     "class_type": "RawText",
     "_meta": {
@@ -170,7 +181,7 @@
         0
       ],
       "clip": [
-        "4",
+        "33",
         1
       ]
     },
@@ -179,30 +190,23 @@
       "title": "RawTextEncode"
     }
   },
-  "28": {
+  "33": {
     "inputs": {
-      "pixels": [
-        "29",
+      "lora_name": "99A.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "4",
         0
       ],
-      "vae": [
+      "clip": [
         "4",
-        2
+        1
       ]
     },
-    "class_type": "VAEEncode",
+    "class_type": "LoraLoader",
     "_meta": {
-      "title": "VAE Encode"
-    }
-  },
-  "29": {
-    "inputs": {
-      "image": "../output/portrait_00001_.png",
-      "upload": "image"
-    },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Load Image"
+      "title": "Load LoRA"
     }
   }
 }

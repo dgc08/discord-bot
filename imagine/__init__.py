@@ -23,29 +23,31 @@ def file_hash(filename):
 
 async def imagine(ctx, prompt_user, negative_prompt, style, batch_count=1, scan_image=False):
     prompt = json.load(open(f'imagine/{style}.json'))
+    sleeptime = 0.1
 
     # Insert Prompts
     for i, prompt_obj in prompt.items():
-        if prompt_obj["_meta"]["title"] == "Prompt": # Positive Prompt
+        if prompt_obj["_meta"]["title"] == "Prompt":  # Positive Prompt
             prompt[i]["inputs"]["raw_text"] = prompt_user
-        if prompt_obj["class_type"] == "RawText" and prompt_obj["inputs"]["raw_text"] == "": # Negative Prompt
-            print("Negative Node:", i)
+        if prompt_obj["class_type"] == "RawText" and prompt_obj["inputs"]["raw_text"] == "":  # Negative Prompt
             prompt[i]["inputs"]["raw_text"] = negative_prompt
-        if i == "25":
-            print(prompt_obj)
+        # IF CLIPTextEncode es used
+        if prompt_obj["_meta"]["title"] == "CLIPPrompt":  # Positive Prompt
+            prompt[i]["inputs"]["text"] = prompt_user
+            sleeptime = 1
+            print("Be careful; SDXL workflow is probable")
+        if prompt_obj["_meta"]["title"] == "CLIPNegative":  # Positive Prompt
+            prompt[i]["inputs"]["text"] = prompt_user
 
-
-    coroutines = [imagine_core(ctx, prompt, str(randint(1, 2147483647)), style, scan_image) for _ in range(batch_count)]
+    coroutines = [imagine_core(ctx, prompt, str(randint(1, 2147483647)), style, scan_image, sleeptime) for _ in range(batch_count)]
     await asyncio.gather(*coroutines)
 
 
 async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime=0.1):
     # set the seed for our KSampler node
-    try:
-        prompt["3"]["inputs"]["seed"] = randint(1, 2147483647)
-    except KeyError:
-        pass
     for i, prompt_obj in prompt.items():
+        if prompt_obj["class_type"] == "KSampler":
+            prompt[i]["inputs"]["seed"] = randint(1, 2147483647)
         if prompt_obj["class_type"] == "SaveImage":
             filename_prefix = prompt[i]["inputs"]["filename_prefix"]
             # Remove everything after the last "/", then append the queue_id
@@ -60,11 +62,12 @@ async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime
     filename = f"imagine/outputs/{queue_id}_00001_.png"
     print(filename)
 
-    if scan_image == True:
+    if scan_image:
         try:
-            if not check_image(filename, textprompt):
+            if not check_image(filename, textprompt) or style.startswith("ign_"):
                 await ctx.send(
-                    "I won't imagine this. Skibbidy image (or rather skibbidy prompt) detected. Hans get se flammenwerfer!")
+                    "I won't imagine this. Skibbidy image (or rather skibbidy prompt) detected. "
+                    "Hans get se flammenwerfer!")
                 os.remove(filename)
                 return
         except UnboundLocalError:
@@ -87,12 +90,13 @@ async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime
     print("Elapsed time:", elapsed_time, "seconds", filename)
 
     # ctx, prompt_user, style, scan_image = False
-    id_to_prompt[queue_id] = {"ctx": ctx, "prompt": prompt, "scan_image": scan_image, "style": style}
+    id_to_prompt[queue_id] = {"ctx": ctx, "prompt": prompt, "scan_image": scan_image, "style": style, "sleeptime": sleeptime}
 
     with open(filename, "rb") as f:
         try:
-            await ctx.send(f'Generation Time: {elapsed_time} \nSeed: {prompt["3"]["inputs"]["seed"]}', file=discord.File(f, f"{queue_id}.png", spoiler=True),
-                        reference=ctx.message, view=GeneratedOptions())
+            await ctx.send(f'Generation Time: {elapsed_time} \nSeed: {prompt["3"]["inputs"]["seed"]}',
+                           file=discord.File(f, f"{queue_id}.png", spoiler=True),
+                           reference=ctx.message, view=GeneratedOptions())
         except KeyError:
             await ctx.send(f'Generation Time: {elapsed_time}',
                            file=discord.File(f, f"{queue_id}.png", spoiler=True),
@@ -106,54 +110,59 @@ async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime
 
 class GeneratedOptions(discord.ui.View):  # Create a class called MyView that subclasses discord.ui.View
     @discord.ui.button(label="Another image",
-                       style=discord.ButtonStyle.primary)  # Create a button with the label "😎 Click me!" with color Blurple
+                       style=discord.ButtonStyle.primary)
     async def button_callback(self, interaction, button):
         generate_id = interaction.message.attachments[0].filename.replace('SPOILER_', '').replace('.png', '')
         try:
             id_to_prompt[generate_id]["ctx"]
         except KeyError:
-            await interaction.reply("Too much time has elapsed, the buttons don't work anymore...")
+            await interaction.response.send_message(
+                content="Too much time has elapsed, the buttons don't work anymore...", ephemeral=True)
 
         await interaction.response.send_message(content="Generating...", ephemeral=True)
 
         queue_id = str(randint(1, 2147483647))
         prompt = id_to_prompt[generate_id]["prompt"]
-        prompt["3"]["inputs"]["denoise"] = 1
+        for i, prompt_obj in prompt.items():
+            if prompt_obj["class_type"] == "KSampler":
+                prompt[i]["inputs"]["denoise"] = 1
 
-        await interaction.response.defer()
         await imagine_core(id_to_prompt[generate_id]["ctx"], prompt, queue_id, id_to_prompt[generate_id]["style"],
-                           id_to_prompt[generate_id]["scan_image"])
+                           id_to_prompt[generate_id]["scan_image"], id_to_prompt[generate_id]["sleeptime"])
 
     @discord.ui.button(label="Other Variant of this image",
-                       style=discord.ButtonStyle.primary)  # Create a button with the label "😎 Click me!" with color Blurple
+                       style=discord.ButtonStyle.primary)
     async def button_callback2(self, interaction, button):
         generate_id = interaction.message.attachments[0].filename.replace('SPOILER_', '').replace('.png', '')
         try:
-            await id_to_prompt[generate_id]["ctx"]
+            id_to_prompt[generate_id]["ctx"]
         except KeyError:
-            await interaction.reply("Too much time has elapsed, the buttons don't work anymore...")
+            await interaction.response.send_message(
+                content="Too much time has elapsed, the buttons don't work anymore...", ephemeral=True)
 
         await interaction.response.send_message(content="Generating...", ephemeral=True)
 
         queue_id = str(randint(1, 2147483647))
         prompt = id_to_prompt[generate_id]["prompt"]
-        prompt["3"]["inputs"]["denoise"] = 0.85
+        for i, prompt_obj in prompt.items():
+            if prompt_obj["class_type"] == "KSampler":
+                prompt[i]["inputs"]["denoise"] = 0.85
         for i, prompt_obj in prompt.items():
             if prompt_obj["class_type"] == "LoadImage":
                 prompt_obj["inputs"]["image"] = "../output/imagine/" + generate_id + "_00001_.png"
 
-        await interaction.response.defer()
         await imagine_core(id_to_prompt[generate_id]["ctx"], prompt, queue_id, id_to_prompt[generate_id]["style"],
-                           id_to_prompt[generate_id]["scan_image"])
+                           id_to_prompt[generate_id]["scan_image"], id_to_prompt[generate_id]["sleeptime"])
 
     @discord.ui.button(label="Upscale this image",
-                       style=discord.ButtonStyle.primary)  # Create a button with the label "😎 Click me!" with color Blurple
+                       style=discord.ButtonStyle.primary)
     async def button_callback3(self, interaction, button):
         generate_id = interaction.message.attachments[0].filename.replace('SPOILER_', '').replace('.png', '')
         try:
-            await id_to_prompt[generate_id]["ctx"]
+            id_to_prompt[generate_id]["ctx"]
         except KeyError:
-            await interaction.reply("Too much time has elapsed, the buttons don't work anymore...")
+            await interaction.response.send_message(
+                content="Too much time has elapsed, the buttons don't work anymore...", ephemeral=True)
 
         await interaction.response.send_message(content="Upscaling...", ephemeral=True)
 
@@ -163,7 +172,5 @@ class GeneratedOptions(discord.ui.View):  # Create a class called MyView that su
             if prompt_obj["class_type"] == "LoadImage":
                 prompt_obj["inputs"]["image"] = "../output/imagine/" + generate_id + "_00001_.png"
 
-        await interaction.response.defer()
         await imagine_core(id_to_prompt[generate_id]["ctx"], prompt, queue_id, id_to_prompt[generate_id]["style"],
-                           id_to_prompt[generate_id]["scan_image"], 1.2)
-
+                           id_to_prompt[generate_id]["scan_image"], 2)
