@@ -1,26 +1,26 @@
 {
   "3": {
     "inputs": {
-      "seed": 569506702320946,
+      "seed": 199302283236761,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
       "scheduler": "normal",
       "denoise": 1,
       "model": [
-        "4",
+        "33",
         0
       ],
       "positive": [
-        "31",
+        "22",
         0
       ],
       "negative": [
-        "34",
+        "27",
         0
       ],
       "latent_image": [
-        "37",
+        "34",
         0
       ]
     },
@@ -31,7 +31,7 @@
   },
   "4": {
     "inputs": {
-      "ckpt_name": "sd_xl_base_1.0.safetensors"
+      "ckpt_name": "anythingv5nijimix_25BEST.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
@@ -79,106 +79,129 @@
       "title": "Save Image"
     }
   },
-  "29": {
+  "17": {
     "inputs": {
-      "image": "sdxl.png",
-      "upload": "image"
+      "raw_text": "mappa animation,makima \\(chainsaw man\\), 1girl, business suit, chainsaw man, formal, high-waist pants, highres, office lady, pants, red hair, solo, suit, yellow eyes"
     },
-    "class_type": "LoadImage",
+    "class_type": "RawText",
     "_meta": {
-      "title": "Load Image"
+      "title": "RawText"
     }
   },
-  "31": {
+  "18": {
     "inputs": {
-      "conditioning_to_strength": 0.75,
-      "conditioning_to": [
-        "32",
+      "raw_text_1": [
+        "20",
         0
       ],
-      "conditioning_from": [
-        "33",
+      "raw_text_2": [
+        "17",
         0
       ]
     },
-    "class_type": "ConditioningAverage",
+    "class_type": "RawTextCombine",
     "_meta": {
-      "title": "ConditioningAverage"
+      "title": "RawTextCombine"
     }
   },
-  "32": {
+  "20": {
     "inputs": {
-      "text": "beautiful scenery nature glass bottle landscape, purple galaxy bottle,",
+      "raw_text": "makima standing in a forest"
+    },
+    "class_type": "RawText",
+    "_meta": {
+      "title": "Prompt"
+    }
+  },
+  "22": {
+    "inputs": {
+      "raw_text": [
+        "18",
+        0
+      ],
       "clip": [
-        "4",
+        "33",
         1
       ]
     },
-    "class_type": "CLIPTextEncode",
+    "class_type": "RawTextEncode",
     "_meta": {
-      "title": "CLIPPrompt"
+      "title": "RawTextEncode"
+    }
+  },
+  "23": {
+    "inputs": {
+      "raw_text": "embedding:easynegative.safetensors ,(nsfw), watermark, text, error, blurry, jpeg artifacts, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, artist name, (worst quality, low quality:1.4), bad anatomy"
+    },
+    "class_type": "RawText",
+    "_meta": {
+      "title": "RawText"
+    }
+  },
+  "25": {
+    "inputs": {
+      "raw_text": ""
+    },
+    "class_type": "RawText",
+    "_meta": {
+      "title": "RawText"
+    }
+  },
+  "26": {
+    "inputs": {
+      "raw_text_1": [
+        "25",
+        0
+      ],
+      "raw_text_2": [
+        "23",
+        0
+      ]
+    },
+    "class_type": "RawTextCombine",
+    "_meta": {
+      "title": "RawTextCombine"
+    }
+  },
+  "27": {
+    "inputs": {
+      "raw_text": [
+        "26",
+        0
+      ],
+      "clip": [
+        "33",
+        1
+      ]
+    },
+    "class_type": "RawTextEncode",
+    "_meta": {
+      "title": "RawTextEncode"
     }
   },
   "33": {
     "inputs": {
-      "text": "detailed, realistic, 8k uhd, high quality",
+      "lora_name": "makima_offset.safetensors",
+      "strength_model": 1.4000000000000001,
+      "strength_clip": 1,
+      "model": [
+        "4",
+        0
+      ],
       "clip": [
         "4",
         1
       ]
     },
-    "class_type": "CLIPTextEncode",
+    "class_type": "LoraLoader",
     "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
+      "title": "Load LoRA"
     }
   },
   "34": {
     "inputs": {
-      "conditioning_to_strength": 0.85,
-      "conditioning_to": [
-        "36",
-        0
-      ],
-      "conditioning_from": [
-        "35",
-        0
-      ]
-    },
-    "class_type": "ConditioningAverage",
-    "_meta": {
-      "title": "ConditioningAverage"
-    }
-  },
-  "35": {
-    "inputs": {
-      "text": "",
-      "clip": [
-        "4",
-        1
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIPNegative"
-    }
-  },
-  "36": {
-    "inputs": {
-      "text": ", (nsfw),smooth, plastic, blurry, low-resolution, deep-fried, oversaturated",
-      "clip": [
-        "4",
-        1
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
-  },
-  "37": {
-    "inputs": {
       "pixels": [
-        "38",
+        "35",
         0
       ],
       "vae": [
@@ -191,9 +214,9 @@
       "title": "VAE Encode"
     }
   },
-  "38": {
+  "35": {
     "inputs": {
-      "image": "sdxl.png",
+      "image": "portrait.png",
       "upload": "image"
     },
     "class_type": "LoadImage",

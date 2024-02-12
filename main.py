@@ -1,13 +1,18 @@
+import asyncio
 import threading
+import datetime
+import time
 
 import discord
 from pydub import AudioSegment
 import requests
 from io import BytesIO
-from discord.ext import commands
 
 from Playlist import Playlist
-from imagine import imagine
+from bot_provider import get_bot
+from imagine import imagine, images_count
+from chat import check_chat, send_response, add_channel, remove_channel
+from chat.FakeConversation import conv
 
 with open("discord_api.token") as f:
     for line in f.readlines():
@@ -15,34 +20,145 @@ with open("discord_api.token") as f:
             pass
         else:
             token = line.strip()
-            print(token)
             break
 
 playlist = Playlist()
 
-intents = discord.Intents.default()
-intents.message_content = True
-bot = commands.Bot(command_prefix='$', intents=intents)
+channels = [1205461984489906196, 1205261654208811038, 1205261574130892830, 922766999388561460, 922839879249952809,
+            1206352102280929291, 1205264701869785138]
+channels_to_not_scan = [1205261654208811038, 922839879249952809, 1206352102280929291, 1205264701869785138]
 
-async def webm_to_mp3(url):
-    # Get the webm file from the URL
-    response = requests.get(url)
-    webm_data = response.content
+start_time = time.time()
+command_count = 0
+response_count = 0
 
-    # Convert webm data to AudioSegment
-    webm_audio = AudioSegment.from_file(BytesIO(webm_data), format="webm")
+bot = get_bot()
 
-    # Export AudioSegment as mp3
-    mp3_data = BytesIO()
-    webm_audio.export(mp3_data, format="mp3")
 
-    return mp3_data.getvalue()
+@bot.event
+async def on_ready():
+    await bot.change_presence(status=discord.Status.invisible)
+    print("Ready.")
+
+@bot.event
+async def on_message(message):
+    global response_count, command_count
+
+    if message.author == bot.user:  # Check if the message author is the bot itself
+        return  # Ignore messages sent by the bot itself
+    if check_chat(message) and ((not message.content.startswith("$")) or message.content.startswith("$imp")):  # Check if the message was sent in a channel where chat is allowed
+        response_count += 1
+        await send_response(message)
+    if message.content.startswith("$"):
+        command_count += 1
+    await bot.process_commands(message)  # Ensure commands still work by processing them after handling the message
+
+@bot.command(
+    name="info"
+)
+async def info(ctx):
+    uptime_seconds = time.time() - start_time
+    uptime_string = str(datetime.timedelta(seconds=int(uptime_seconds)))
+
+    await ctx.send("Uptime: " + uptime_string + "\n\n" + "Commands executed (est.): " + str(command_count) + "\nImages Generated: " + str(images_count) + "\nMessages send by the chat module: " + str(response_count))
+
+    image_info = []
+
+    if ctx.message.channel.id in channels:
+        image_info.append ("Image Generation is enabled in this channel")
+    if ctx.message.channel.id in channels_to_not_scan:
+         image_info.append ("Image Generation filters are disabled in this channel")
+
+    await ctx.send("\n".join(image_info) + "\n\nModules:")
+
+    external_modules = {
+        "imagine (ComfyUI)": {"method": "GET", "url": "http://127.0.0.1:8188/system_stats"},
+        "chat (oobabooga webui)": {"method": "GET", "url": "http://127.0.0.1:5000/v1/internal/model/info"}
+    }
+
+    for module_num, (module, config) in enumerate(external_modules.items(), start=1):
+        method = config["method"]
+        url = config["url"]
+
+        # Perform the request
+        try:
+            # Perform the request
+            if method == "GET":
+                response = requests.get(url)
+            elif method == "POST":
+                response = requests.post(url)
+            else:
+                raise ValueError("Unsupported HTTP method")
+
+            # Check if the status code is 200
+            ok = response.status_code == 200
+            json_content = response.json() if ok else None
+            status_code = response.status_code
+
+        except requests.ConnectionError:
+            # Handle the connection error gracefully
+            print("The service is not available. Connection refused.")
+            ok = False
+            status_code, json_content = ("Connection Refused", "Connection Refused")
+
+
+        if module_num==2:
+            if ok:
+                if json_content["model_name"] == "None":
+                    content = f"**{module_num}: {module}: [--]** Service Running, but no Model is loaded ({json_content['model_name']})"
+                else:
+                    content = f"**{module_num}: {module}: [OK]** Loaded Model: {json_content['model_name']}"
+            else:
+                content = f"**{module_num}: {module}: [--]** Status Code {status_code}"
+        else:
+            content = f"**{module_num}: {module}: [{'OK' if ok else '--'}]** {json_content}"
+
+        await ctx.send(content=content)
+
+@bot.command(
+    name="ping"
+)
+async def ping(ctx):
+    await ctx.send(f"pong! (message received with {(datetime.datetime.now(datetime.timezone.utc) - ctx.message.created_at).total_seconds()}s delay)")
+
+
+@bot.command(
+    name='start_chat',
+    description='starts a chat',
+    pass_context=True, )
+async def start_chat(ctx):
+    await ctx.send("Chat started.")
+    await asyncio.sleep(1)
+    await add_channel(ctx.message.channel)
+
+
+@bot.command(
+    name='stop_chat',
+    description='stops a chat',
+    pass_context=True, )
+async def start_chat(ctx):
+    remove_channel(ctx.message.channel)
+    await ctx.send ("Chat stopped.")
 
 @bot.command(
     name='load',
     description='Downloads a mp3 file from deine röhre (übersetze auf englisch lol) lol',
     pass_context=True, )
 async def load(ctx, link=None):
+    async def webm_to_mp3(url):
+        # Get the webm file from the URL
+        response = requests.get(url)
+        webm_data = response.content
+
+        # Convert webm data to AudioSegment
+        webm_audio = AudioSegment.from_file(BytesIO(webm_data), format="webm")
+
+        # Export AudioSegment as mp3
+        mp3_data = BytesIO()
+        webm_audio.export(mp3_data, format="mp3")
+
+        return mp3_data.getvalue()
+
     if link is None:
         await ctx.send("Ju häve tu spesifei se link.")
         return
@@ -128,8 +244,6 @@ async def yt(context, song=None):
     pass_context=True,
 )
 async def imagine_call(context, prompt=None, *args):
-    channels = [1205261574130892830, 1205261654208811038, 1094293780330463282, 1205264701869785138, 922766999388561460, 1205461984489906196]
-    channels_to_not_scan = [1205264701869785138, 1205261654208811038,]
     if context.channel.id not in channels:
         await context.send("You cannot use this function here.")
         return

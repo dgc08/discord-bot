@@ -2,6 +2,7 @@ Librarys/
 *.lock
 *.png
 ign_*
+base_prompt.txt
 *.token
 *.exe
 .idea/
