@@ -99,7 +99,7 @@ async def info(ctx):
             # Handle the connection error gracefully
             print("The service is not available. Connection refused.")
             ok = False
-            status_code, json_content = ("Connection Refused", "Connection Refused")
+            status_code, json_content = ("Connection Refused", "Connection Refused Service is offline")
 
 
         if module_num==2:
