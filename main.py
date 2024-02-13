@@ -1,8 +1,11 @@
 import asyncio
+import random
 import threading
 import datetime
 import time
+from os import _exit
 
+import IPython
 import discord
 from pydub import AudioSegment
 import requests
@@ -10,9 +13,11 @@ from io import BytesIO
 
 from Playlist import Playlist
 from bot_provider import get_bot
-from imagine import imagine, images_count
+from imagine import imagine
 from chat import check_chat, send_response, add_channel, remove_channel
+
 from chat.FakeConversation import conv
+from chat.FakeContext import Context
 
 with open("discord_api.token") as f:
     for line in f.readlines():
@@ -35,10 +40,22 @@ response_count = 0
 bot = get_bot()
 
 
+eventqueue = []
 @bot.event
 async def on_ready():
-    await bot.change_presence(status=discord.Status.invisible)
+    #await bot.change_presence(status=discord.Status.invisible)
     print("Ready.")
+
+    global eventqueue
+    while True:
+        while eventqueue == []:
+            await asyncio.sleep(0.1)
+
+        id = eventqueue[0][3]
+        result = await eventqueue[0][0](*eventqueue[0][1], **eventqueue[0][2])
+        eventqueue[0].append(result)
+        while eventqueue != [] and eventqueue[0][3] == id:
+            await asyncio.sleep(0.1)
 
 @bot.event
 async def on_message(message):
@@ -52,24 +69,25 @@ async def on_message(message):
     if message.content.startswith("$"):
         command_count += 1
     await bot.process_commands(message)  # Ensure commands still work by processing them after handling the message
+def info(ctx=None):
+    msg = ""
 
-@bot.command(
-    name="info"
-)
-async def info(ctx):
+    from imagine import images_count
     uptime_seconds = time.time() - start_time
     uptime_string = str(datetime.timedelta(seconds=int(uptime_seconds)))
 
-    await ctx.send("Uptime: " + uptime_string + "\n\n" + "Commands executed (est.): " + str(command_count) + "\nImages Generated: " + str(images_count) + "\nMessages send by the chat module: " + str(response_count))
+    msg += "Uptime: " + uptime_string + "\n\n" + "Commands executed (est.): " + str(command_count) + "\nImages Generated: " + str(images_count) + "\nMessages send by the chat module: " + str(response_count) + "\n"
 
     image_info = []
+    try:
+        if ctx.message.channel.id in channels:
+            image_info.append ("Image Generation is enabled in this channel")
+        if ctx.message.channel.id in channels_to_not_scan:
+             image_info.append ("Image Generation filters are disabled in this channel")
+    except AttributeError:
+        pass
 
-    if ctx.message.channel.id in channels:
-        image_info.append ("Image Generation is enabled in this channel")
-    if ctx.message.channel.id in channels_to_not_scan:
-         image_info.append ("Image Generation filters are disabled in this channel")
-
-    await ctx.send("\n".join(image_info) + "\n\nModules:")
+    msg += "\n".join(image_info) + "\n\nModules:" + "\n"
 
     external_modules = {
         "imagine (ComfyUI)": {"method": "GET", "url": "http://127.0.0.1:8188/system_stats"},
@@ -105,15 +123,23 @@ async def info(ctx):
         if module_num==2:
             if ok:
                 if json_content["model_name"] == "None":
-                    content = f"**{module_num}: {module}: [--]** Service Running, but no Model is loaded ({json_content['model_name']})"
+                    content = f"**{module_num}: {module}: [--]** Service Running, but no Model is loaded ({json_content['model_name']})" + "\n"
                 else:
-                    content = f"**{module_num}: {module}: [OK]** Loaded Model: {json_content['model_name']}"
+                    content = f"**{module_num}: {module}: [OK]** Loaded Model: {json_content['model_name']}" + "\n"
             else:
-                content = f"**{module_num}: {module}: [--]** Status Code {status_code}"
+                content = f"**{module_num}: {module}: [--]** Status Code {status_code}" + "\n"
         else:
-            content = f"**{module_num}: {module}: [{'OK' if ok else '--'}]** {json_content}"
+            content = f"**{module_num}: {module}: [{'OK' if ok else '--'}]** {json_content}" + "\n"
 
-        await ctx.send(content=content)
+        msg += content + "\n"
+    return msg
+
+@bot.command(
+    name="info"
+)
+async def info_command(ctx):
+    msg = info(ctx)
+    await ctx.send(msg)
 
 @bot.command(
     name="ping"
@@ -316,6 +342,9 @@ async def play_raw(context, song=None):
     else:
         await ctx.send('Ai kant plei miusik in ä text tschännel')
 
+async def send(channel_id: int, msg: str):
+   await bot.get_channel(channel_id).send(msg)
+
 
 def run_bot():
     bot.run(token)
@@ -325,13 +354,31 @@ if __name__ == "__main__":
     bot_thread = threading.Thread(target=run_bot)
     bot_thread.start()
 
+    def run(func, *args, **kwargs):
+        global eventqueue
+        id = random.randint(1, 2147483647)
+        eventqueue.append([func, args, kwargs, id])
+        while eventqueue[0][3] != id and len(eventqueue[0]) < 5:
+            time.sleep(0.1)
+        while len(eventqueue[0]) == 4:
+            time.sleep(0.1)
+        result = eventqueue[0][4]
+        eventqueue.pop(0)
+        return result
+
+
+    run(asyncio.sleep, 0.1)
+
+    IPython.embed()
+    _exit(0)
+
     while True:
         try:
             user_input = input(">>> ")
         except KeyboardInterrupt:
-            exit()
+            _exit(0)
         if user_input == "exit":
-            break
+            _exit(0)
         else:
             try:
                 exec(user_input)
