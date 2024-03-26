@@ -10,7 +10,7 @@ from chat.History_Service import append_to_history, get_history
 from imagine import imagine
 
 url = "http://127.0.0.1:5000/v1/completions"
-
+"""
 with open("openai.token") as f:
     for line in f.readlines():
         if line.startswith("#") or line.strip() == "":
@@ -22,7 +22,7 @@ with open("openai.token") as f:
 headers = {
     "Content-Type": "application/json"
 }
-
+"""
 
 async def post_data(url, headers, data):
     async with aiohttp.ClientSession() as session:

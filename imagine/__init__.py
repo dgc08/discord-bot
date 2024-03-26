@@ -46,6 +46,16 @@ async def imagine(ctx, prompt_user, negative_prompt="", style="base_workflow", b
     tasks = [asyncio.create_task(coroutine) for coroutine in coroutines]
     await asyncio.wait(tasks)
 
+async def swap_face(ctx):
+    prompt = json.load(open("imagine/swap.json"))
+
+    if len(ctx.message.attachments) != 2:
+        await ctx.send("You need to attach exactly 2 images")
+
+    prompt["27"]["inputs"]["url"] = ctx.message.attachments[0].url
+    prompt["28"]["inputs"]["url"] = ctx.message.attachments[1].url
+
+    await imagine_core(ctx, prompt, str(randint(1, 2147483647)), "swap", False, 0.5)
 
 async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime=0.1):
     global images_count
@@ -58,9 +68,8 @@ async def imagine_core(ctx, prompt, queue_id, style, scan_image=False, sleeptime
         if prompt_obj["class_type"] == "KSampler":
             prompt[i]["inputs"]["seed"] = randint(1, 2147483647)
         if prompt_obj["class_type"] == "SaveImage":
-            filename_prefix = prompt[i]["inputs"]["filename_prefix"]
             # Remove everything after the last "/", then append the queue_id
-            prompt[i]["inputs"]["filename_prefix"] = filename_prefix[:filename_prefix.rfind("/")] + "/" + queue_id
+            prompt[i]["inputs"]["filename_prefix"] = "./imagine/" + queue_id
 
     for i, prompt_obj in prompt.items():
         if prompt_obj["_meta"]["title"] == "Prompt":

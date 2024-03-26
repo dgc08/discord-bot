@@ -13,7 +13,7 @@ from io import BytesIO
 
 from Playlist import Playlist
 from bot_provider import get_bot
-from imagine import imagine
+from imagine import imagine, swap_face
 from chat import check_chat, send_response, add_channel, remove_channel
 
 from chat.FakeConversation import conv
@@ -69,6 +69,8 @@ async def on_message(message):
     if message.content.startswith("$"):
         command_count += 1
     await bot.process_commands(message)  # Ensure commands still work by processing them after handling the message
+
+
 def info(ctx=None):
     msg = ""
 
@@ -303,6 +305,14 @@ async def imagine_call(context, prompt=None, *args):
         await imagine(context, prompt, negative_prompt, style, batch_count, True)
     else:
         await imagine(context, prompt, negative_prompt, style, batch_count)
+
+@bot.command(
+    name='swap_face',
+    description='Swap two faces. Upload two images: First one is the image in which to swap the face, the other one is the reference image',
+    pass_context=True,
+)
+async def swap(ctx):
+    await swap_face(ctx)
 
 @bot.command(
     name='play',

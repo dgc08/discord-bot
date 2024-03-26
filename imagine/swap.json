@@ -1,0 +1,69 @@
+{
+  "1": {
+    "inputs": {
+      "swap_model": "inswapper_128.onnx",
+      "faces_index": "0",
+      "reference_faces_index": 0,
+      "console_logging_level": 0,
+      "image": [
+        "27",
+        0
+      ],
+      "reference_image": [
+        "28",
+        0
+      ]
+    },
+    "class_type": "roop",
+    "_meta": {
+      "title": "roop"
+    }
+  },
+  "14": {
+    "inputs": {
+      "images": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "25": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "27": {
+    "inputs": {
+      "url": "https://cdn.discordapp.com/attachments/922839927673208832/1207294193345630260/image.png?ex=65df1f56&is=65ccaa56&hm=d6bb17440c55a67bf64ab16e764b6f6404cd1f7d1a03757dd03baaa4b097b97d&",
+      "keep_alpha_channel": false,
+      "output_mode": false
+    },
+    "class_type": "LoadImageFromUrl",
+    "_meta": {
+      "title": "Load Image From URL"
+    }
+  },
+  "28": {
+    "inputs": {
+      "url": "https://cdn.discordapp.com/attachments/922839927673208832/1207294193609875456/105190_400.png?ex=65df1f56&is=65ccaa56&hm=c3951e9b7f6ad2c9d999dda7948b8854ca2e9422fece8551dc78ebb4ad603785&",
+      "keep_alpha_channel": true,
+      "output_mode": false
+    },
+    "class_type": "LoadImageFromUrl",
+    "_meta": {
+      "title": "Load Image From URL"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "prompt": "The following is a conversation with an AI Large Language Model. The AI has been trained to answer questions, provide recommendations, and help with decision making. The AI follows user requests. The AI thinks outside the box.\n<|assistant|>\nHow can I help you today?",
+  "greeting": "How can I help you today?",
+  "character_name": "<|assistant|>\n",
+  "user_template": "<|user|>\n"
+}
